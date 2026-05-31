@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Smart Parking System</title>
+
+<style>
+body{
+    background:#f4f7fc;
+    font-family:Arial;
+    text-align:center;
+}
+
+h1{
+    background:#003366;
+    color:white;
+    padding:20px;
+}
+
+.slot{
+    width:250px;
+    margin:15px auto;
+    padding:15px;
+    border-radius:10px;
+    color:white;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.empty{
+    background:green;
+}
+
+.filled{
+    background:red;
+}
+</style>
+</head>
+
+<body>
+
+<h1>SMART PARKING SYSTEM</h1>
+
+<h2>IoT Based Parking Monitoring</h2>
+
+<div id="s1" class="slot">Loading...</div>
+<div id="s2" class="slot">Loading...</div>
+<div id="s3" class="slot">Loading...</div>
+<div id="s4" class="slot">Loading...</div>
+<div id="s5" class="slot">Loading...</div>
+
+<h2 id="availableSlots">Available Slots : 0</h2>
+
+<h2 id="parkingStatus" style="color:green;">
+🟢 PARKING AVAILABLE
+</h2>
+
+<hr>
+
+<h2>Project Details</h2>
+
+<p><b>Project Name:</b> Smart Parking System</p>
+<p><b>Controller:</b> Arduino UNO</p>
+<p><b>WiFi Module:</b> ESP8266</p>
+<p><b>Database:</b> Firebase Realtime Database</p>
+<p><b>Sensors:</b> IR Sensors</p>
+<p><b>Display:</b> LCD 20x4</p>
+
+<hr>
+
+<h3>Government Polytechnic College, Satna</h3>
+<p>Electrical Engineering Department</p>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import { getDatabase, ref, onValue }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDzV3Oga2XtLsPQBLCHD5PBDuBEwgesENA",
+  authDomain: "smart-parking-system-3576e.firebaseapp.com",
+  databaseURL: "https://smart-parking-system-3576e-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "smart-parking-system-3576e",
+  storageBucket: "smart-parking-system-3576e.firebasestorage.app",
+  messagingSenderId: "577783027457",
+  appId: "1:577783027457:web:13c5c4acd595997a292d00",
+  measurementId: "G-2FL7RZXLZ9"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+const slotRef = ref(database, "slotStatus");
+
+onValue(slotRef, (snapshot) => {
+
+    const data = snapshot.val();
+
+    let available = 0;
+
+    for(let i=1;i<=5;i++){
+
+        let value = data["slot"+i];
+
+        let div = document.getElementById("s"+i);
+
+        div.innerHTML = "S"+i+" : "+value;
+
+        if(value === "EMPTY"){
+            div.className = "slot empty";
+            available++;
+        }
+        else{
+            div.className = "slot filled";
+        }
+    }
+
+    document.getElementById("availableSlots").innerHTML =
+    "Available Slots : " + available;
+
+    if(available > 0){
+        document.getElementById("parkingStatus").innerHTML =
+        "🟢 PARKING AVAILABLE";
+        document.getElementById("parkingStatus").style.color = "green";
+    }
+    else{
+        document.getElementById("parkingStatus").innerHTML =
+        "🔴 PARKING FULL";
+        document.getElementById("parkingStatus").style.color = "red";
+    }
+
+});
+
+</script>
+
+</body>
+</html>
